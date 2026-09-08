@@ -1,0 +1,1021 @@
+---
+jupyter:
+  jupytext:
+    cell_metadata_filter: -all
+    split_at_heading: true
+    text_representation:
+      extension: .md
+      format_name: markdown
+      format_version: '1.3'
+      jupytext_version: 1.18.1
+  kernelspec:
+    display_name: Python 3 (ipykernel)
+    language: python
+    name: python3
+---
+
+<style>
+body {
+  font-size: 18px;
+  line-height: 1.8;
+  color: #333;
+}
+
+h1 {
+  color: #2c7be5;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 5px;
+}
+
+h2 { color: #e5533d; }
+h3 { color: #2fa84f; }
+
+.highlight {
+  color: #d63384;
+  font-weight: bold;
+}
+
+.note {
+  background: #f8f9fa;
+  border-left: 5px solid #2c7be5;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.warning {
+  background: #fff3cd;
+  border-left: 5px solid #ffc107;
+  padding: 10px;
+}
+
+.code-desc {
+  color: #6c757d;
+  font-size: 16px;
+}
+
+ul > li,
+ol > li {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2c7be5;
+}
+
+ul ul li,
+ol ol li,
+ul ol li,
+ol ul li {
+  font-size: 18px;
+  font-weight: normal;
+  color: #333;
+}
+</style>
+
+# 信息的表示与数字化
+
+[Home](https://csintro2026.zhengmao.ltd/)
+
+## 本章学习的目的
+
+没有信息层对二进制的定义，硬件就没有运算的对象，软件就没有处理的实体，网络就没有传输的内容——它是整个数字世界赖以建立的“第一因”。
+
+所以在计算系统的洋葱模型中，信息层处在最里面的位置。
+
+### 1. 弄清楚“数的表示”是编程的基础
+
+* 计算机的硬件（晶体管、电路）只能区分有限状态，最基本的是 **0 和 1**。
+* 这意味着任何信息（数字、文字、声音、图像）都必须 **转换为二进制形式** 才能被存储和处理。
+* 所以要理解计算机如何工作，首先要弄明白“数在计算机里是怎么表示的”。
+
+<!-- SLIDE -->
+
+### 2. 表示方式影响精度和范围
+
+* **整数**：用补码表示，能避免符号位的麻烦，也决定了取值范围（例如 32 位整数范围是 −2³¹ ~ 2³¹−1）。
+* **小数/实数**：计算机采用浮点数标准（IEEE 754），但浮点数有精度限制，导致 `0.1+0.2≠0.3` 这样的现象。
+* 如果不了解这些，就很难理解程序中的“奇怪 bug”。
+
+
+<!-- SLIDE -->
+
+### 3. 数字化是信息处理的基础
+
+* 不只是数值，**声音、图像、视频、文字**等信息也需要数字化（采样、量化、编码），才能进入计算机处理。
+* 比如：
+
+  * 声音 → 采样率 & 位深度
+  * 图像 → 像素矩阵 + 颜色编码
+* 这些背后依然是“数的表示”的问题。
+
+<!-- SLIDE -->
+
+
+### 4. 算法与效率依赖表示方法
+
+* 不同的数表示方式影响运算速度和复杂度。
+* 举例：
+
+  * 十进制下做除法比较复杂，但在二进制里除以 2 只要右移一位。
+  * 大整数（比如密码学中的 1024 位数）需要特别的存储和运算方法。
+
+
+<!-- SLIDE -->
+
+### 5. 培养抽象思维
+
+* 从“现实世界的数”到“计算机里的比特串”，这是一个 **抽象建模** 的过程。
+* 学会这种思维方式，后面在学习编译、网络、数据库等课程时，就能更好地理解“抽象层次”的概念。
+
+**讨论信息的表示与数字化，是计算机科学的起点**。它告诉我们：
+
+* 计算机能处理什么信息；
+* 信息是如何存进去、算出来的；
+* 为什么会有限制、误差和 bug。
+
+
+<!-- SLIDE -->
+
+## 数制和数制转换
+
+### 什么是数制？
+
+- 数制也称计数制，是指用一组固定的符号和规则来表示数值的方法
+- 进位计数制
+  - 使用进位的方式进行计数的方法
+
+<img src="https://csintro2026.zhengmao.ltd/images/num.png" alt="num" width="600">
+
+    > 习惯的“0～9”十进制计数
+
+
+<!-- SLIDE -->
+
+#### 更多的计数方法
+
+<img src="https://csintro2026.zhengmao.ltd/images/num2.png" alt="num2" width="600">
+
+- 非进位计数制
+  - 例如罗马数字：符号的值基本固定，由符号组合与减法规则表示数值
+  - 不采用“满基数进一位”的规则
+
+
+<!-- SLIDE -->
+
+
+### 进位计数制
+
+- 常用的进制
+  - 十进制
+  - 六十进制、一百进制？
+- 各种进制表达的数值
+  - 十进制0/1/2/3/4/5/6/7/8/9
+  - 二进制0/1
+  - 八进制0/1/2/3/4/5/6/7
+  - 十六进制0～9，A～F
+- 注意：每个进制里的“10”
+  - 最大个位数+1
+
+<img src="https://csintro2026.zhengmao.ltd/images/digitable.png" alt="digitable" width="600">
+
+    > 常用进制表
+
+<!-- SLIDE -->
+
+
+### 不同数制之间的转换
+
+- 基本思想
+  - 如果两个有理数相等，则这两个数的整数部分和小数部分一定分别相等
+  - 在不同数制之间进行转换时，可以分别对整数部分和小数部分进行转换
+
+<img src="https://csintro2026.zhengmao.ltd/images/ndigi.png" alt="ndigi" width="600">
+
+**位置权值公式**：
+任意进制数 $A = \sum_{i=-j}^{k} d_i \times b^i$
+其中 $b$ 为基数，$d_i$ 为第 $i$ 位数字。
+
+<img src="https://csintro2026.zhengmao.ltd/images/digitrans.png" alt="digitrans" width="600">
+
+<!-- SLIDE -->
+
+
+### 作为计算器的Python Shell
+
+- 输入算术表达式或函数
+- 显示计算的结果
+  - 不特意指定的话，输入输出均为十进制表示
+- 常见的运算符号
+  - +，-，*，%，**
+  - //（整数除法），/（小数除法）
+- 常见的函数
+  - divmod(x,y), abs(x)
+  - int(x)
+
+<img src="https://csintro2026.zhengmao.ltd/images/pythoncalc.png" alt="pythoncalc.png" width="600">
+
+<!-- SLIDE -->
+
+### 各进制表示的算法（十转二）
+
+- 对于N进制而言
+  - 整数部分：除以N取余数
+
+<img src="https://csintro2026.zhengmao.ltd/images/i2b.png" alt="i2b" width="600">
+
+```python
+d, b, l = 253, 2, []
+while d > 0:
+  d, m = divmod(d, b)
+  l.append(str(m))
+print(''.join(reversed(l)) if l else 0)
+```
+
+<!-- SLIDE -->
+
+
+### 各进制表示的算法（小数十转二）
+
+- 例如：二进制表示小数0.745
+- 对于N进制小数
+  - 小数部分：乘以N取整数
+- 转换精度
+  - 小数部分不为零时，重复次数越多，结果越精确
+  - 不同进制表示同一个小数（有理数），有两种情况
+  - 可能是有限小数
+  - 可能是无限循环小数
+- 存储误差
+  - 计算机内部采用二进制保存数
+  - 只能保存有限位数的bit，超出的会被截断
+  - 因此产生误差
+```
+>>> 0.1+0.2
+0.30000000000000004
+```
+
+<img src="https://csintro2026.zhengmao.ltd/images/f2b.png" alt="f2b" width="600">
+
+```python
+x, b, l=0.745, 2, []
+for _ in range(20):
+  if x > 0:
+    x *= b
+    i = int(x)
+    l.append(str(i))
+    x -= i
+  else:
+    break
+print('0.'+''.join(l))
+```
+
+<!-- SLIDE -->
+
+
+### 各进制数到十进制表示
+
+- 把各进制数各个数位上的数按权值展开求和
+
+<img src="https://csintro2026.zhengmao.ltd/images/fb2d.png" alt="fb2d" width="600">
+
+<!-- SLIDE -->
+
+
+### Python不同进制转换
+
+<img src="https://csintro2026.zhengmao.ltd/images/pydigitrans.png" alt="pydigitrans" width="600">
+
+```python
+int('g', 20)
+```
+
+<!-- SLIDE -->
+
+
+### 特殊的直接转换：二进制<->八进制
+
+<img src="https://csintro2026.zhengmao.ltd/images/botrans.png" alt="botrans.png" width="600">
+
+### 特殊的直接转换：二进制<->十六进制
+
+<img src="https://csintro2026.zhengmao.ltd/images/bhtrans.png" alt="bhtrans.png" width="600">
+
+
+<!-- SLIDE -->
+
+<details>
+<summary>复习</summary>
+
+- 如果 38 +1=40，这说明使用的是 <mark>9 </mark> 进制。(23y)
+- 整数有不同进制的表示法，通常可以把整数放在括号()中，括号()后跟一下标表示其进制，以下关于整数的哪种表示是错误的?
+	- A) $(110)_2$	
+  - B) $(367)_8$	
+  - C) <mark> $(9EH)_{16}$ </mark>	
+  - D) $(221)_4$
+
+- 数制转换运算
+  - $ (2023)_{10}$ = (<mark>111 1110 0111</mark>)$_2$
+  - $(5.375)_{10}$ = (<mark>101.011</mark>)$_2$
+  - $(3D8A)_{16}$ = (<mark>11 1101 1000 1010</mark>)$_2$
+
+> 可以按照课件上的办法一步一步计算；也有快办法：0.375 = 3/8 = (0.011)$_2$
+
+</details>
+
+<!-- SLIDE -->
+
+
+## 二进制运算
+
+### 算术运算
+
+- 加减乘除的运算法则与十进制相同
+
+<img src="https://csintro2026.zhengmao.ltd/images/addminus.png" alt="addminus" width="600">
+
+<img src="https://csintro2026.zhengmao.ltd/images/muldiv.png" alt="muldiv" width="600">
+
+<!-- SLIDE -->
+
+
+### 二进制的逻辑运算（位运算，没有进位）
+
+- 逻辑非：~
+  - ~1 = 0;  ~0 = 1
+- 逻辑或：|
+  - 0 | 0 = 0;  0 | 1 = 1;  1 | 0 = 1;  1 | 1 = 1
+- 逻辑与：&
+  - 0 & 0 = 0;  0 & 1 = 0;  1 & 0 = 0;  1 & 1 = 1
+- 逻辑异或：^
+  - 0 ^ 0 = 0;  0 ^ 1 = 1;  1 ^ 0 = 1;  1 ^ 1 = 0
+
+<img src="https://csintro2026.zhengmao.ltd/images/logop.png" alt="logop" width="600">
+
+* 逻辑`与`有两种表示，分别是这里的`&`和逻辑值运算`and`，两者并不通用
+  - `1 and 2`与`1 & 2`不一样
+* 逻辑`或`同理
+
+<!-- SLIDE -->
+
+
+### 二进制的移位运算
+
+- 左移 n 位 `<< n`
+  - 在最低位加 n 个 0（相当于乘以 $2^n$）
+  - 如：`3 << 2 = 12`
+  - python中的左移不存在**溢出**的问题
+- 右移 n 位 `>> n`
+  - 去掉 n 个最低位（相当于整除 $2^n$）
+  - 如：`33 >> 3 = 4`
+- Python 的整数不是简单的 C 类型，而是一个大整数对象；底层会根据需要动态分配内存，来存储更多的二进制位。
+
+<img src="https://csintro2026.zhengmao.ltd/images/shiftop.png" alt="shiftop.png" width="600">
+
+<!-- SLIDE -->
+
+
+<details>
+<summary>复习</summary>
+
+- 二进制算术运算与逻辑运算
+  - 100101 * 101001 = (<mark>101 1110 1101</mark>)$_2$
+  - 1110 0111 - 1001 1010 =  (<mark>100 1101</mark>)$_2$
+  - 0110 0101 | (~0101 0011) = (<mark>1110 1101</mark>)$_2$
+
+> 四则运算与十进制一样，笔算都可以例竖式。
+
+- 对于⼀个整型变量a ，如果希望只把a的低7位取反，正确的运算是______ 。
+（^为⼆进制异或运算符）
+  - A. `~a` B. `!a` <mark> C. `a^127` </mark> D. `a^255`
+
+</details>
+
+<!-- SLIDE -->
+
+
+### 浮点数的二进制表示
+
+- 应用最广泛的IEEE-754标准的浮点数表示（科学计数法）
+- 浮点数是存在溢出问题的
+- Python中的浮点数默认是双精度的
+
+| 特性          | 单精度（float32） | 双精度（float64） |
+| ----------- | ------------ | ------------ |
+| 字节数         | 4 字节         | 8 字节         |
+| 精度          | 约 7 位有效数字    | 约 15 位有效数字   |
+| 范围          | ±3.4×10³⁸    | ±1.8×10³⁰⁸   |
+| 存储结构        | 1+8+23       | 1+11+52      |
+| Python 默认类型 | 否            | 是            |
+
+
+<!-- SLIDE -->
+
+<!-- 2500011730 贡献加分 0.5 -->
+
+<img src="https://csintro2026.zhengmao.ltd/images/ieee754.png" alt="ieee754" width="600">
+
+<!-- SLIDE -->
+
+
+#### **38的来历**
+
+单精度浮点数范围：±3.4×10³⁸
+```
+>>> 2**7
+128
+>>> 2**(2**7)
+340282366920938463463374607431768211456
+>>> float(2**(2**7))
+3.402823669209385e+38
+```
+
+<!-- SLIDE -->
+
+
+### 负数的二进制表示
+
+- 以单字节为例
+- 原码
+  - 通常意义上的二进制
+  - 需要1bit表示正负，7b表示值
+   - 5 = 0000 0101
+   - -5 = 1000 0101
+- 反码
+  - 正数保持原码，负数按位取反
+  - 5 = 0000 0101
+  - -5 = 1111 1010
+- 补码
+  - 正数保持原码，负数则取反+1
+  - 5 = 0000 0101
+  - -5 = 1111 1011
+- Python二进制负数 = 补码
+  - 1、负数首位为1
+  - 2、反码+1
+
+**费那事干嘛！！？？**
+
+<!-- SLIDE -->
+
+### 二进制的算术运算：原码计算法
+
+- A+B
+- A>=0 and B>=0
+  - 计算A + B
+- A&lt;0 and B&lt;0
+  - 计算-(-A + -B)
+- 原码加减法需要两套算法
+  - 加法：按位加和进位
+  - 减法：按位减和借位
+
+<img src="https://csintro2026.zhengmao.ltd/images/origallminus.png" alt="origallminus" width="600">
+
+
+<!-- SLIDE -->
+
+### 二进制的算术运算：补码计算法
+
+- A+B
+  - 直接计算A+B
+- A-B
+  - 直接计算A + (-B)
+- 补码的加减法只需要一套算法
+  - 加法：按位加和进位
+  - 减法：变换为加法
+- 计算机内部普遍采用补码表示整数，简化了算术电路
+
+<img src="https://csintro2026.zhengmao.ltd/images/impaddminus.png" alt="impaddminus" width="600">
+
+<!-- SLIDE -->
+
+
+## 计算机中的二进制
+
+### 从数组说起 
+
+- 数组表示 - 从身份证号码说起
+  - A[start:end]代表start~end-1位的数组，从0计数。
+  - 起始位置:start，结束位置：end-1
+  - 身份证从左至右依次为：六位数字地址码，八位数字出生日期码，三位数字顺序码和一位数字校验码。
+
+  <img src="https://csintro2026.zhengmao.ltd/images/resized_idcode.png" alt="身份证编码" width="600">
+
+<!-- SLIDE -->
+
+
+<details>
+<summary>复习</summary>
+
+- 一个地区的车牌号共包含 5位，第一位是大写字母(A~Z)，后 4 位是十进制数(0~9)，最多可以有<mark>$26\times 10^4$</mark> 种不同的车牌。(23y) 
+
+</details>
+
+
+<!-- SLIDE -->
+
+### 二进制信息存储容量的量化单位
+
+<img src="https://csintro2026.zhengmao.ltd/images/resized_dataMeas.png" alt="数据单位" width="600">
+
+- 更大的量化单位：PB(Peta Byte)、EB(Exa Byte)、ZB(Zetta Byte)、YB(Yotta Byte)、NB(Nona Byte)、DB(Dogga Byte)
+- 习惯上用B来表示byte，用b来表示bit；
+
+<!-- SLIDE -->
+
+
+<img src="https://csintro2026.zhengmao.ltd/images/resized_binKM.png" alt="二进制千兆" width="600">
+
+计算机中使用的二进制千(K)、兆(M)、吉(G)与十进制的千、兆、吉略有不同，不严格的情况下可以忽略它们的差别。
+
+<!-- SLIDE -->
+
+
+在硬盘、网络速率等场合使用的是十进制前缀。 例如：
+- 1 TB（厂商标） = $10^{12}$ bytes
+- 但计算机系统显示时会除以 $2^{30}$ ，所以看到约为 931 GiB
+- 通信领域中的Mb/s(Maga bits/second)，Gb/s(Giga bits/second)，也是十进制前缀
+
+| 领域          |  量词前缀  |  最小单位   |
+| ---           |  ---      |   ---   |
+| 计算机（文件）| 二进制     | Byte |
+| 存储（硬盘）    | 十进制  | Byte |
+| 通信（带宽）  | 十进制    | bit |
+
+
+<!-- SLIDE -->
+
+
+<details>
+<summary>复习</summary>
+
+- 你家装了联通的千兆宽带，08年北京奥运会开幕式的高清录像文件有4GB，从网上下载下来最少要多久？
+  - 文件大小：4 GB = 4 × 1024 MB = 4096 MB
+  - 网络速度：1000Mb/s = 125MB/s
+  - 4096 / 125 = 32.8 约等于 33秒
+</details>
+
+<!-- SLIDE -->
+
+
+### 计算机内部的数据类型
+- 字的定义
+  - 一个字 (word) 是指 CPU 一次能处理的、具有固定长度的自然数据单位
+- 字长
+  - 字长是衡量计算机性能的重要指标，通常与 CPU 的总线宽度相关
+  - 英特尔（Intel）芯片的字长发展经历了从 4位（如4004）到8位（如8008） 的起步，随后进入 16位（8086/8088） 时代，再到革命性的 32位（x86/IA-32），最终跨入 64位（x86-64/AMD64，Intel 64） 时代，实现了数据处理能力的飞跃，推动了个人计算机和服务器的巨大进步。 
+- 现代PC字长多为32位或64位，一个字包含多个字节（byte）
+
+<!-- SLIDE -->
+
+- 早期 16 位系统
+  - 字节 Byte = 8bit
+  - 字 Word = 16bit
+  - 双字 Doubleword = 32bit
+  - 四倍长字 Quadword = 64bit
+  - 双四倍长字 Double Quadword = 128bit
+
+<img alt="wordlength" src="https://csintro2026.zhengmao.ltd/images/binlen.png" width=700>
+
+
+<!-- SLIDE -->
+
+- 操作系统也需要与CPU字长适配
+
+<img src="https://csintro2026.zhengmao.ltd/images/win3264.png" alt="32 位与 64 位系统" width="600">
+
+
+<!-- SLIDE -->
+
+<details>
+<summary>复习</summary>
+
+- ⼀台16位计算机有16个数据寄存器（R0~R15）、1024个字的存储空间以及16种不同的指令（如add、
+subtract等）， `add M R2`这条指令最少需要占_____ 位空间（M 是存储空间的某个地址，内存以1
+个字节为管理单元）。
+
+  > 编码指令用4位，寄存器用4位，内存用10+1位，最少是4+4+10+1 = 19bit；
+  > 实际中需要考虑对齐 (Alignment)问题: 计算机设计倾向于让指令长度是基本存储单元（如字节）的倍数，这能简化CPU的取指操作，减少访存次数，提高效率。
+
+</details>
+
+<!-- SLIDE -->
+
+<!-- END -->
+
+
+## 数字化原理
+
+### 计算机内数据的输入和输出
+
+<img src="https://csintro2026.zhengmao.ltd/images/dataio.png" alt="dataio" width="600">
+
+### 各种数据类型的编码
+
+####  编码
+
+把信息从一种形式（通常是自然的、模拟的或人类能理解的形式）转换成**数字形式**（0和1的二进制代码）的过程。
+
+#### 数值表示
+
+把数编码成二进制
+- 原码/反码/补码
+
+#### 指令编码
+
+不管是什么语言编写的程序，计算机/CPU看到的都只是指令的序列
+- 将计算机内部所能进行的各种基本操作用二进制数表示出来，以便于计算机的识别于运行。如：
+  - 跳转JMP 0xEA 11101010
+  - 逻辑或计算OR 0x0C 00001100
+  - 等等
+
+<img src="https://csintro2026.zhengmao.ltd/images/x86inst.png" alt="x86指令格式" width="600">
+
+<img src="https://csintro2026.zhengmao.ltd/images/x86code2inst.png" alt="x86code2inst" width="600">
+
+- x86只是指令集中的一种（属于CISC：指令多、长度不固定、功能强大）
+
+#### 文字编码
+
+##### 英文字符编码ASCII码
+
+- ASCII码
+  - 美国信息交换标准码（American Standard Code for Information Interchange）
+  - 国际上使用最广泛的字符编码
+- ASCII码的编码规则
+  - 每个字符用7位二进制数( $d_6d_5d_4d_3d_2d_1d_0$ )来表示；
+  - 可表示128个字符（7位二进制共有128种状态，$2^7$ = 128）
+- ASCII码在计算机中的存储
+  - 在计算机中，每个字符的ASCII码用一个字节存
+  - 字节的最高位d7为校验位（可以用来进行奇偶校验），实际上用0填充；字节的后7位为实际编码值
+
+##### ASCII码 - python
+
+<img src="https://csintro2026.zhengmao.ltd/images/ascpy.png" alt="ascpy" width="600">
+
+<img src="https://csintro2026.zhengmao.ltd/images/aschar.png" alt="aschar" width="600">
+
+
+<details>
+<summary>复习</summary>
+
+- 二进制信息查看
+
+ (1) 小北学习了信息编码原理后，有一天从网上看到可以通过某些编辑软件来查看文件的二进制编码信息。网页上说，在软件中安装十六进制编辑插件，打开文件后选择十六进制方式查看，可以看到文件中具体存放的二进制信息。于是小北立刻进行了尝试，他新建了一个空的文本文件，在其中输入了一段文本: "Welcome to Peking University!"，然后按上述模式进行观看，屏幕上显示如下：
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20241204210126167.png" alt="image-20241204210126167" style="zoom:67%;" />
+
+(注:字符W的ASCII码的十六进制表示为57，字符e的ASCII码的十六进制表示为65，以此类推)
+
+ 小北发现了其中的规律，感觉像是打开了一扇通往新世界的大门。他兴奋地在文件中输入了一条新的消息，并截图发给他的室友(文本已屏蔽)。请帮小北的室友判断一下，小北输入的是什么内容?
+
+<img src="https://raw.githubusercontent.com/GMyhf/img/main/img/image-20241204210229153.png" alt="image-20241204210229153" style="zoom:67%;" />
+
+文本内容：<mark>Happy New Year!</mark> (2分)
+
+（2）小北的室友也决定试一把，他在文件中输入"Hello World!"，屏幕上显示的数据会是什么样？
+
+请把表格中的信息补全。表格中"-"表示无数据。（2分）
+
+| Address  | 0    | 1    | 2    | 3    | 4    | 5    | 6    | 7    | 8    | 9    | A    | B    | C    | D    | E    | F    |
+| -------- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| 00000000 | 48   | 65   | 6C   | 6C   | 6F   | 20   | 57   | 6F   | 72   | 6C   | 64   | 21   | -    | -    | -    | -    |
+
+
+- 给出表达式
+  1. 已知变量c存储了一个字母的ASCII码，请写一个表达式判断其值是否为大写英文字母(如果是，得到True；否则，得到False)
+      ```python
+      65 <= c <= 90
+      ord('A') <= c <= ord('Z')
+      ```
+  2. 已知i是一个整数（取值范围：0 到4294967295）表示一个北大学生的学号。已知小明所在年级的同专业同学的学号都是2310305XXX这种形式，而与他同专业的在校高年级学生的学号只能是2010305XXX，2110305XXX，2210305XXX这种形式。请写一个表达式判断具有学号i的学生是否是小明的同专业同学或师兄师姐(如果是，得到True；否则，得到False)
+      ```python
+      (20 <= (i // 100000000) <= 23) and ((i // 1000) % 100000 == 10305)
+      ```
+ > 题意为：最高两位在20~23的范围，中间五位为10305，末尾三位不限。
+
+</details>
+
+##### 汉字编码 – 国标
+
+- 常用汉字数量：3000～5000个
+  - 无法用一个字节来编码
+- 国标码GB2312-80《信息交换用汉字编码字符集 基本集》
+  - 共收集了6763个字符
+  - 用两个字节来编码一个汉字；每个字节的最高位为0
+  - 一种定长编码方式
+- 国标码在计算机中的存储：汉字内码
+  - 把国标码两个字节的最高位变为1（避免和ASCII码发生冲突）
+  - 同一段文字中，可以既有国标码字符，又有ASCII码字符
+
+<img src="https://csintro2026.zhengmao.ltd/images/arcode.png" alt="arcode" width="600">
+
+##### Unicode字符集
+
+- Unicode是为了解决传统的字符编码方案的局限而产生的
+  - 它为每种语言中的每个字符（含😊）设定了统一并且唯一的二进制编码
+  - 以满足跨语言、跨平台进行文本转换、处理的要求
+- Unicode 为世界上所有字符都分配了一个唯一的数字编号，这个编号范围从 0x000000 到 0x10FFFF (十六进制)，有 110 多万
+- 每个字符都有一个唯一的 Unicode 编号，这个编号一般写成 16 进制，在前面加上 U+
+  - 例如：“马”的 Unicode 是U+9A6C。
+- Unicode字符百科：https://unicode-table.com/cn/
+
+<img src="https://csintro2026.zhengmao.ltd/images/unicodechar.png" alt="unicodechar" width="600">
+
+<img src="https://csintro2026.zhengmao.ltd/images/codema.png" alt="codema" width="600">
+
+##### Unicode字符的存储编码 - python
+
+- Unicode编号有多种编码存储方案：UTF-8，UTF-16，UTF-32
+  - 涉及长度、多字节位置（大小端）等不同安排，具体方案见参考资料
+    - https://blog.csdn.net/zhusongziye/article/details/84261211
+  - 每个字符：UTF-32（4字节，定长），UTF-8（1~4个字节），UTF-16（2或4个字节）
+
+   <img src="https://csintro2026.zhengmao.ltd/images/unicode1.png" alt="unicode1" width="600">
+
+  - UTF-16/UTF-32对字符进行编码，在字符本身之外还有一些额外开销，比如上面的`b'\xff\xfe'`，表示BOM(Byte Order Mark)
+
+
+<details>
+<summary>复习</summary>
+
+- 以下哪个编码字符集，为世界上绝大部分语言设定了统一并且唯一的二进制编码，以满足跨语言、跨平台的文本交换需求?目前该编码字符集中已经收录了超过十万个不同字符。(23y)
+	- A) ASCII	
+  - B) <mark>Unicode</mark>	
+  - C)GBK 2312	
+  - D)BIG5
+
+
+- 以下关于信息编码的说法不正确的是: (23y)
+	- A) ASCII 编码了所有的英文字母和常用的标点符号
+	- B) <mark>中文字符总是可以用2个字节的二进制数来表示</mark>
+	- C) 分辨率为 1024 * 768 的 256 色的图片最少需要占用 786,432 字节的内存来存储
+	- <mark>D)十六进制的 1A 和十五进制的 1A 表示的是同一个数值</mark>
+  > 对于分辨率为1024*768的256色图片，每个像素的颜色可以通过8位（1字节）来表示，因为2的8次方等于256，正好可以表示256种不同的颜色。
+  > 为了计算这种图像所需的存储空间，可以使用以下公式：
+  > $ \text{存储空间} = \text{宽度} \times \text{高度} \times \text{每个像素的字节数} $
+  > 将给定的值代入公式中：
+  > $ \text{存储空间} = 1024 \times 768 \times 1 \, \text{byte} $
+  > $ \text{存储空间} = 786,432 \, \text{bytes} $
+  >
+  > 在某些传统中文编码中，汉字通常用 2 个字节表示；
+  > 如 GBK，编码2万多汉字，但它并没有包括所有的中文字符；
+  > 有些生僻字并，比如：𠮷（“吉”的异体)在GB2312和GBK中都没有，在GB18030和UTF-8中都采用4字节编码；
+  > 如果改成“**常用**中文字符”就对了。
+
+- ASCII码是⼀种字符编码标准，它使⽤_____ 个字节编码单个字符，⼀共编码了128个不同的字符。
+已知⼤写字⺟ `X` 的 ASCII 编码的16进制表示为$(58)_{16}$ ，则字⺟ `N` 的 ASCII 编码是(___)$_{16}$ 。
+  > <mark>1</mark>个字节；<mark>(4E)</mark>$_{16}$，X在N后面第10个字符，$(58)_{16} - 10 = (4E)_{16}$
+
+</details>
+
+#### 声音编码
+
+##### 声波的离散采样与编码
+
+- 声波的离散化采样是在时间和波形高度这两个维度上独立进行
+  - 在时间维上进行时间的离散化（按一定的均匀时间间隔采样）；
+  - 同时，每一个采样点的波形高度值（声波的振幅）也是经过离散化，记录为若干个二进制位的整数编码，两者合在一起形成了声音波形的编码
+- 这种记录声音的方式称为声音的波形编码。
+
+<img src="https://csintro2026.zhengmao.ltd/images/soundcode.png" alt="soundcode" width="600">
+
+##### 发声输出
+
+- 当然，仅仅记录声音的波形是不够的，要想听到声音，还需要有相应的发声设备，这就是音箱、扬声器等设备。
+- 计算机根据声音的波形编码数据，指挥发声设备产生相应的声音。
+
+<img src="https://csintro2026.zhengmao.ltd/images/soundout.png" alt="soundout" width="600">
+
+##### 声音的质量与存储空间
+
+- 采样点的时间间隔越小，波形高度编码位数越多，就与原始波形函数越符合。
+- 声音编码中的“采样频率”，指得就是单位时间对声音波形的采样次数。
+  - 采样频率用Hz（赫兹）为单位，每秒钟采样500次即为500Hz。
+  - 显然，采样频率高的声音记录质量会更好一些，为此所用的存储空间也大一些。
+  - 一般音乐CD的采样频率为44KHz，更高可达48KHz，96KHz
+    - 这里的KHz是十进制，表示1000Hz
+- 为了获得较好的声音效果，往往采用双声道，每声道用2字节（16 bit）来记录波形高度值（更高可达24bits）
+
+##### 声音的质量与存储空间
+
+- 一首4分钟长的歌曲（采样频率44KHz，立体声16bits），需要占用多少存储空间？
+  - 时间*频率*每采样位数*声道数=总bit数量
+
+<img src="https://csintro2026.zhengmao.ltd/images/resized_soundcalc.png" alt="soundcalc" width="600">
+
+##### 声音的压缩存储
+
+- 显然，如果采样波形编码来记录声音的话，存储声音所需的空间要求就太大了
+  - 如果要存储1个小时的音乐，就需要>600MB的存储空间
+- 现在流行的MP3音乐，实际上是对声音的波形编码的一种压缩处理技术
+  - 它使得一首4分钟的歌曲只需约4MB左右的存储空间（码率128Kbps）
+  - 这样，一个存储容量为16GB的U盘，就能够存放4000首歌曲了！
+
+<img src="https://csintro2026.zhengmao.ltd/images/soundzip.png" alt="soundzip" width="600">
+
+<details>
+<summary>复习</summary>
+
+- 当音乐被数字化存储到计算机中时，声音信号必须经过: (23y)
+	- A) 采样	
+  - B) 离散化	
+  - C) 编码	
+  - D) <mark> 以上A、B、C都要</mark>
+
+</details>
+
+#### 颜色编码
+
+- 现实生活中颜色也是一种连续现象，因此也不可能穷举颜色
+- 需要对颜色的连续光谱和其他和视觉有关的连续特性进行离散化，将近似的颜色划分为同一种颜色，用一个特定的二进制数表示
+- 颜色系统
+  - 单色系统：2色(1位)
+  - 灰度系统：256级（8位）
+  - 彩色系统
+    - 16色(4位)、256色(8位)
+    - 真彩色(16位/24位/32位)
+- 计算机中实际颜色表示还受到硬件设备能力的限制
+  - (需要产生颜色的设备：显示器)
+
+<img src="https://csintro2026.zhengmao.ltd/images/16color.png" alt="16color" width="600">
+
+##### 图像颜色模型：RGB/HSV
+
+- 三原色模型RGB
+- 用3个字节表示颜色
+  - 分别表示红、绿、蓝颜色值
+  - 0-255，一共有256\*256\*256种
+- 引入第四个字节表示透明度的RGBA模型
+- 另一种常用颜色模型HSV
+  - 辉度、饱和度、亮度
+
+<img src="https://csintro2026.zhengmao.ltd/images/rgb2hsv.png" alt="rgb2hsv" width="600">
+
+#### 图像编码
+
+##### 像素和图像
+
+- 像素Pixel
+  - 组成图像的基本小方格，具有大小和位置，规则排列
+- 像素的属性
+  - 形状、大小、位置、颜色值
+- 图像Image
+  - 由规则排列的像素构成的矩形，可以描绘各种视觉形象
+- 图像的属性
+  - 分辨率、像素密度、颜色模型
+
+<img src="https://csintro2026.zhengmao.ltd/images/gcode.png" alt="gcode" width="600">
+
+<img src="https://csintro2026.zhengmao.ltd/images/greygraph.png" alt="greygraph" width="600">
+
+##### Python中读取图像
+
+<img src="https://csintro2026.zhengmao.ltd/images/lenna.png" alt="lenna" width="600">
+
+    lenna.png
+
+- 安装包pillow
+
+<img src="https://csintro2026.zhengmao.ltd/images/lenna1.png" alt="lenna1" width="600">
+
+<img src="https://csintro2026.zhengmao.ltd/images/lenna2.png" alt="lenna2" width="600">
+
+##### 像素密度：PPI（Pixel Per Inch）
+
+- 每英寸像素点数量
+- 密度越高图像越精细
+- 视网膜分辨率
+  - 人眼在常规距离上无法分辨出视网膜屏幕的像素点
+  - 标准视力5.0，看手机的距离，300ppi达到无法分辨像素点
+
+<img src="https://csintro2026.zhengmao.ltd/images/ppi.png" alt="ppi" width="600">
+
+##### 点阵表示
+
+- 以颜色编码为基础，将二维平面（空间）离散化为网格点，记录每个网格点上的一个代表性颜色值
+- 分辨率：网格点的数目，如1024x768
+
+<img src="https://csintro2026.zhengmao.ltd/images/pointmat.png" alt="pointmat" width="600">
+
+<img src="https://csintro2026.zhengmao.ltd/images/pointmat1.png" alt="pointmat1" width="600">
+
+###### 图像质量
+
+<img src="https://csintro2026.zhengmao.ltd/images/picqua.png" alt="picqua" width="600">
+
+- 可以看到，不同分辨率、不同颜色编码的图像，其图像质量差别非常大。对于同样一幅原始图像：
+  - 如果对其离散化后的网格点越多，即分辨率越高，则图像越精细，质量越好；
+  - 如果颜色编码所采用的二进制位数越多，即所能表示的颜色数越多，则图像质量越好
+- 当然，图像质量越高，其所需的存储空间也是非常大的
+- 一幅分辨率为4,000*3,000的真彩色(24位，3Bytes)图像，如果不做压缩，其所需的存储空间约为：
+  - 4,000*3,000*3Byte = 36,000,000Byte ≈ 34MB（JPG压缩后2.9MB）
+
+<details>
+<summary>复习</summary>
+
+- 一幅1024x1024 的点阵图像，其颜色为 24 位真彩色，如果不压缩，该图像至少需要 <mark> 3 MB</mark> 存储空间；
+   假设该图像的颜色数为200种，为了压缩存储空间，对每种颜色编号，则200 种颜色至少需要 <mark> 1 字节</mark> 表示；
+   这时所需存储空间降低至 <mark> 1 MB </mark>。(23y)
+
+</details>
+
+##### 矢量图形表示
+
+- 点阵表示法的一个重要缺点是，图像中的对象（例如，建筑物）和图像中一个个像元之间，两者的关系没有表示出来。
+  - 要得到高质量的图像，数据存储量需求非常大
+- 矢量图形表示：与声音的MIDI编码相类似，将图像分解为直线和曲线的集合；每条直线/曲线用相应的公式存储
+  - 显示图像时，根据图像尺寸动态计算并画出图像
+  - 只需要很少的存储量就可以表示一个图形对象
+  - 可以无限放大，都不会出现颗粒感
+
+<img src="https://csintro2026.zhengmao.ltd/images/vecpic.png" alt="vecpic" width="600">
+
+###### 二维坐标平面和矢量图形
+
+- 在二维坐标平面，用顶点和顶点的连接来表示点、线、面
+- 通过点符号、线型、填充模式来表达形状，并指定颜色
+- 可以绘制高质量图形，并任意缩放
+- 用几何形状（线条、多边形、曲线）描述画面，更适合平面设计、图标、插画、Logo 等。
+
+<img src="https://csintro2026.zhengmao.ltd/images/vecpic1.png" alt="vecpic1" width="600">
+
+<details>
+<summary>复习</summary>
+
+- 在计算机中表示图像的<mark> 矢量 </mark> 表示方法中，图像分解为几何图形的组合。(23y)
+
+</details>
+
+###### 字符的字体与字形
+
+- 字符要显示出来，就是一个小图像
+- 同一个字符，设定的显示字体不同，就显出不同字形
+- 字形有两种表示法
+  - 点阵：由像素构成，对于不同大小需要不同分辨率点阵；
+  - 矢量：由轮廓构成，对于不同大小可以无级缩放。
+
+<img src="https://csintro2026.zhengmao.ltd/images/charfont.png" alt="charfont" width="600">
+
+#### 视频编码
+
+- 数字化视频主要是由时间上连续序列的数字化图像再加上数字化声音的合成体
+- 视频是在时间和空间上对活动场景的离散采样
+  - 视频中的一张图像是对某一时刻场景的空间离散采样，称为视频的一帧
+  - 每秒约24-30帧的连续帧采样就形成影像。
+- 为什么每秒需要约24帧的连续帧？这是和人眼的视觉效果有关
+  - 通常一秒钟需要采样24帧左右，才能在视觉上感知为连续影像。
+  - 当每秒钟采集的影像帧再减少，视觉上会有断续感，效果变差
+  - 如果多于30帧/秒，视觉上难以察觉区别
+- 视频所需要的存储空间非常大
+  - 存储1:30:17的1920×1080（FHD）的真彩色(24位)电影视频（Cube.心慌方.1997）
+  - 按照每秒钟24帧计算，不包括声音信息
+  - 需要（1920×1080×3 byte×24帧×5417秒）个字节（808,753,766,400字节）
+  - 大约753GB（H.264压缩后1.33GB）
+- 视频的压缩是一个非常重要的研究方向
+
+### 数字化原理：计算机内部数据
+
+- 二进制数表示
+  - 任何信息在计算机中都以二进制的数字形式被存储、被处理，还通过各种通讯媒体被传输和接收。
+- 数字化编码
+  - 在特定的上下文环境中，对表示某类信息的二进制数据赋予意义，形成基本的共识性数据。
+  - 指令、数值、字符、颜色、图像、声音、影像等编码
+- 结构化数据
+  - 复杂数据，是各种基本共识性数据的组合，如Word文件、PowerPoint文件等，其中可以包括字符、数字、图像、声音等
+
+### 文件类型：约定后缀名
+
+- 可执行文件（exe、com、dll、lib等）：指令
+- 文本文件（txt、html、py、sh等）：字符、指令脚本
+- 声音文件（wav、mp3、flac等）：声音（包括压缩）
+- 图像文件（bmp、jpg、png、tif、gif等）：图像（包括压缩）
+- 视频文件（mp4、avi、mpg、mkv等）：视频（包括压缩）
+- 其他文件（doc、ppt等）：各种编码数据的混合，结构化
+
+<img src="https://csintro2026.zhengmao.ltd/images/filesuff.png" alt="filesuff" width="600">
+
+### 数字化原理小结
+- 数值表示
+- 字符编码
+- 声音编码
+  - 波形编码
+  - MIDI（音乐设备数字接口）
+- 颜色编码
+- 图像编码
+  - 点阵表示
+  - 矢量表示
+- 视频编码 
+
+数值表示和字符编码是有穷现象：
+- 特定位数的二进制数和现象一一对应。
+
+声音、颜色、图像、视频的编码是连续现象：
+- 离散化采样
+- 减少现象的数量
+
+## 更正记录
+
+感谢以下同学对课件的内容提出了宝贵的意见。
+
+- 10/14/2025 2500011730 
+  > 单精度浮点数应该是7位有效数字    +0.5
+  <!-- 2510306201  贡献加分 0.5 -->
+- 1/4/2026 2510306201
+  > 改正了“左移/右移”运算中的排版错误 +0.5
+  <!-- 2510306201  贡献加分 0.5 -->
